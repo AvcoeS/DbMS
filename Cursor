@@ -1,0 +1,95 @@
+1. Implicit Cursors
+
+create table customer1(ID int, name varchar(10), salary int);
+
+insert into customer1 values(1, 'AAA', 2000);
+
+insert into customer1 values(2, 'BBB', 3000);
+
+insert into customer1 values(3, 'CCC', 4000);
+
+select * from customer1;
+
+DECLARE 
+
+ total_rows number(2); 
+
+BEGIN 
+
+ UPDATE customer1 
+
+ SET salary = salary + 500; 
+
+ IF sql%notfound THEN 
+
+ dbms_output.put_line('no customers selected'); 
+
+ ELSIF sql%found THEN 
+
+ total_rows := sql%rowcount;
+
+ dbms_output.put_line( total_rows || ' customers selected 
+
+'); 
+
+ END IF; 
+
+END;
+
+Output: 
+
+3 customers selected'
+
+
+
+2. Explicit Cursors
+
+create table customer2(ID int, name varchar(10), address varchar(20));
+
+insert into customer2 values(1, 'AAA', '2000');
+
+insert into customer2 values(2, 'BBB', '3000');
+
+insert into customer2 values(3, 'CCC', '4000');
+
+select * from customer2;
+
+DECLARE 
+
+ c_id customer2.id%type; 
+
+ c_name customer2.name%type; 
+
+ c_addr customer2.address%type; 
+
+ CURSOR c_customers is 
+
+ SELECT id, name, address FROM customer2; 
+
+BEGIN 
+
+ OPEN c_customers; 
+
+ LOOP 
+
+ FETCH c_customers into c_id, c_name, c_addr; 
+
+ EXIT WHEN c_customers%notfound; 
+
+ dbms_output.put_line(c_id || ' ' || c_name || ' ' || c_addr); 
+
+ END LOOP; 
+
+ CLOSE c_customers; 
+
+END;
+
+Output
+
+Statement processed.
+
+1 AAA 2000
+
+2 BBB 3000
+
+3 CCC 4000
